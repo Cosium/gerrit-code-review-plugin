@@ -10,6 +10,7 @@ import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredenti
 import com.cloudbees.plugins.credentials.domains.URIRequirementBuilder;
 import com.google.gerrit.extensions.api.GerritApi;
 import com.google.gerrit.extensions.common.ProjectInfo;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.model.Item;
 import hudson.model.Queue;
@@ -47,7 +48,7 @@ public class GerritSCMNavigator extends SCMNavigator {
   @CheckForNull private final String serverUrl;
   private final boolean insecureHttps;
   @CheckForNull private final String credentialsId;
-  @Nonnull private final List<SCMTrait<? extends SCMTrait<?>>> traits;
+  @Nonnull private final List<? extends SCMTrait<?>> traits;
 
   public GerritSCMNavigator() {
     this(null, false, null, Collections.emptyList());
@@ -58,7 +59,7 @@ public class GerritSCMNavigator extends SCMNavigator {
       String serverUrl,
       boolean insecureHttps,
       String credentialsId,
-      List<SCMTrait<? extends SCMTrait<?>>> traits) {
+      List<? extends SCMTrait<?>> traits) {
     this.serverUrl = StringUtils.trimToNull(serverUrl);
     this.insecureHttps = insecureHttps;
     this.credentialsId = StringUtils.defaultIfBlank(credentialsId, null);
@@ -165,7 +166,13 @@ public class GerritSCMNavigator extends SCMNavigator {
 
     @Override
     public SCMNavigator newInstance(String name) {
-      return null;
+      return new GerritSCMNavigator(null, false, null, delegate.getTraitsDefaults());
+    }
+
+    @NonNull
+    @Override
+    public String getDescription() {
+      return super.getDescription();
     }
 
     public FormValidation doCheckServerUrl(@QueryParameter String value) {
@@ -222,7 +229,7 @@ public class GerritSCMNavigator extends SCMNavigator {
   }
 
   @Nonnull
-  public List<SCMTrait<? extends SCMTrait<?>>> getTraits() {
+  public List<? extends SCMTrait<?>> getTraits() {
     return traits;
   }
 }
