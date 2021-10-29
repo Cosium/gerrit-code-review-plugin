@@ -41,14 +41,15 @@ import org.eclipse.jgit.transport.URIish;
 import org.jenkinsci.plugins.gitclient.GitClient;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 public class GerritSCMNavigator extends SCMNavigator {
 
-  @CheckForNull private final String serverUrl;
-  private final boolean insecureHttps;
-  @CheckForNull private final String credentialsId;
-  @Nonnull private final List<? extends SCMTrait<?>> traits;
+  @CheckForNull private String serverUrl;
+  private boolean insecureHttps;
+  @CheckForNull private String credentialsId;
+  @Nonnull private List<? extends SCMTrait<?>> traits;
 
   public GerritSCMNavigator() {
     this(null, false, null, Collections.emptyList());
@@ -219,8 +220,18 @@ public class GerritSCMNavigator extends SCMNavigator {
     return serverUrl;
   }
 
+  @DataBoundSetter
+  public void setServerUrl(String serverUrl) {
+    this.serverUrl = serverUrl;
+  }
+
   public boolean isInsecureHttps() {
     return insecureHttps;
+  }
+
+  @DataBoundSetter
+  public void setInsecureHttps(boolean insecureHttps) {
+    this.insecureHttps = insecureHttps;
   }
 
   @CheckForNull
@@ -228,8 +239,19 @@ public class GerritSCMNavigator extends SCMNavigator {
     return credentialsId;
   }
 
+  @DataBoundSetter
+  public void setCredentialsId(String credentialsId) {
+    this.credentialsId = credentialsId;
+  }
+
   @Nonnull
   public List<? extends SCMTrait<?>> getTraits() {
     return traits;
+  }
+
+  @DataBoundSetter
+  public void setTraits(List<? extends SCMTrait<?>> traits) {
+    this.traits =
+        ofNullable(traits).map(Collections::unmodifiableList).orElseGet(Collections::emptyList);
   }
 }
