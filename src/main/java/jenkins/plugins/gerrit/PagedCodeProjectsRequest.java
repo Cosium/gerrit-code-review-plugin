@@ -31,21 +31,16 @@ public class PagedCodeProjectsRequest implements Iterable<ProjectInfo> {
 
   private static class ProjectIterator implements Iterator<ProjectInfo> {
 
+    private final GerritApi gerritApi;
     private final int chunkMaxSize;
-    private final Projects.ListRequest listRequest;
+
+    private Projects.ListRequest listRequest;
     private Iterator<ProjectInfo> chunkIterator;
     private boolean moreChunkToFetch = true;
 
     public ProjectIterator(GerritApi gerritApi, int chunkMaxSize) {
+      this.gerritApi = gerritApi;
       this.chunkMaxSize = chunkMaxSize;
-      listRequest =
-          gerritApi
-              .projects()
-              .list()
-              // Setting the type even if it is not used by the implementation ...
-              .withType(Projects.ListRequest.FilterType.CODE)
-              .withStart(-1)
-              .withLimit(chunkMaxSize);
     }
 
     @Override
@@ -68,13 +63,27 @@ public class PagedCodeProjectsRequest implements Iterable<ProjectInfo> {
 
       List<ProjectInfo> nextChunk;
       try {
-        nextChunk = listRequest.withStart(chunkMaxSize * (listRequest.getStart() + 1)).get();
+        if (listRequest != null) {
+          listRequest.withStart(listRequest.getStart() + chunkMaxSize);
+        } else {
+          listRequest = createListRequest();
+        }
+        nextChunk = listRequest.get();
       } catch (RestApiException e) {
         throw new IllegalStateException(e);
       }
       moreChunkToFetch = nextChunk.size() >= chunkMaxSize;
       chunkIterator = nextChunk.iterator();
       return chunkIterator;
+    }
+
+    private Projects.ListRequest createListRequest() {
+      return gerritApi
+          .projects()
+          .list()
+          // Setting the type even if it is not used by the implementation ...
+          .withType(Projects.ListRequest.FilterType.CODE)
+          .withLimit(chunkMaxSize);
     }
   }
 }

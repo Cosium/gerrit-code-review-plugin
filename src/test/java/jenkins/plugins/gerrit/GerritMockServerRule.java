@@ -4,6 +4,7 @@ import static java.util.Optional.ofNullable;
 
 import com.google.gerrit.extensions.common.ProjectInfo;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,19 +72,24 @@ public class GerritMockServerRule implements TestRule {
                       .map(Integer::parseInt)
                       .orElse(projectRepository.size());
 
+              if (start >= projectRepository.size()) {
+                return HttpResponse.response()
+                    .withStatusCode(200)
+                    .withBody(JsonBody.json(Collections.emptyMap()));
+              }
+
               Map<String, ProjectInfo> projectSlice =
                   new ArrayList<>(projectRepository.values())
-                      .subList(start, Math.min(start + limit, projectRepository.size()))
-                      .stream()
-                      .collect(
-                          Collectors.toMap(
-                              projectInfo -> projectInfo.id,
-                              Function.identity(),
-                              (u, v) -> {
-                                throw new IllegalStateException(
-                                    String.format("Duplicate key %s", u));
-                              },
-                              LinkedHashMap::new));
+                      .subList(start, Math.min(start + limit, projectRepository.size())).stream()
+                          .collect(
+                              Collectors.toMap(
+                                  projectInfo -> projectInfo.id,
+                                  Function.identity(),
+                                  (u, v) -> {
+                                    throw new IllegalStateException(
+                                        String.format("Duplicate key %s", u));
+                                  },
+                                  LinkedHashMap::new));
               return HttpResponse.response()
                   .withStatusCode(200)
                   .withBody(JsonBody.json(projectSlice));

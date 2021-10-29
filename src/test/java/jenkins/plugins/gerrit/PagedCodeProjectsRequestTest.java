@@ -22,7 +22,7 @@ public class PagedCodeProjectsRequestTest {
 
   @Before
   public void beforeEach() throws URISyntaxException {
-    request = new PagedCodeProjectsRequest(new GerritApiBuilder().gerritApiUrl(g.getUrl()).build());
+    request = new PagedCodeProjectsRequest(new GerritApiBuilder().gerritApiUrl(g.getUrl()).build(), CHUNK_MAX_SIZE);
   }
 
   @Test
@@ -38,6 +38,11 @@ public class PagedCodeProjectsRequestTest {
   @Test
   public void testAFullChunkAndAPartialOne() {
     test(CHUNK_MAX_SIZE + 1);
+  }
+
+  @Test
+  public void test2FullChunksAndAPartialOne() {
+    test(2 * CHUNK_MAX_SIZE + 1);
   }
 
   private void test(int numberOfProjects) {
