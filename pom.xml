@@ -16,7 +16,7 @@
   </licenses>
 
   <artifactId>gerrit-code-review</artifactId>
-  <version>0.4.7</version>
+  <version>0.4.7.0.cosium-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>Gerrit Code Review plugin</name>
   <description>Integrates Jenkins with Gerrit Code Review</description>
@@ -54,6 +54,17 @@
       </plugins>
     </pluginManagement>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.3</version>
+        <configuration>
+          <pushChanges>false</pushChanges>
+          <localCheckout>true</localCheckout>
+          <!-- Goals run during the prepare step. Default value is clean verify which does 2 builds during a release -->
+          <preparationGoals>clean</preparationGoals>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
@@ -425,9 +436,9 @@
   </dependencies>
 
   <scm>
-    <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-    <url>http://github.com/jenkinsci/${project.artifactId}-plugin</url>
+    <connection>scm:git:git://github.com/Cosium/${project.artifactId}-plugin.git</connection>
+    <developerConnection>scm:git:git@github.com:Cosium/${project.artifactId}-plugin.git</developerConnection>
+    <url>http://github.com/Cosium/${project.artifactId}-plugin</url>
     <tag>gerrit-code-review-0.4.7</tag>
   </scm>
 
