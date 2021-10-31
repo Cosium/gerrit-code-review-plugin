@@ -22,7 +22,9 @@ public class PagedCodeProjectsRequestTest {
 
   @Before
   public void beforeEach() throws URISyntaxException {
-    request = new PagedCodeProjectsRequest(new GerritApiBuilder().gerritApiUrl(g.getUrl()).build(), CHUNK_MAX_SIZE);
+    request =
+        new PagedCodeProjectsRequest(
+            new GerritApiBuilder().gerritApiUrl(g.getUrl()).build(), CHUNK_MAX_SIZE);
   }
 
   @Test

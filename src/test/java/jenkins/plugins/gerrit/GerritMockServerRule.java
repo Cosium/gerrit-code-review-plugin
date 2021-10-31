@@ -80,16 +80,17 @@ public class GerritMockServerRule implements TestRule {
 
               Map<String, ProjectInfo> projectSlice =
                   new ArrayList<>(projectRepository.values())
-                      .subList(start, Math.min(start + limit, projectRepository.size())).stream()
-                          .collect(
-                              Collectors.toMap(
-                                  projectInfo -> projectInfo.id,
-                                  Function.identity(),
-                                  (u, v) -> {
-                                    throw new IllegalStateException(
-                                        String.format("Duplicate key %s", u));
-                                  },
-                                  LinkedHashMap::new));
+                      .subList(start, Math.min(start + limit, projectRepository.size()))
+                      .stream()
+                      .collect(
+                          Collectors.toMap(
+                              projectInfo -> projectInfo.id,
+                              Function.identity(),
+                              (u, v) -> {
+                                throw new IllegalStateException(
+                                    String.format("Duplicate key %s", u));
+                              },
+                              LinkedHashMap::new));
               return HttpResponse.response()
                   .withStatusCode(200)
                   .withBody(JsonBody.json(projectSlice));
